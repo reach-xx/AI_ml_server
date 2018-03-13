@@ -1339,7 +1339,7 @@ class FI_find_group_users_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRING, 'success', 'UTF8', None, ),  # 0
+        (0, TType.STRUCT, 'success', (db_users, db_users.thrift_spec), None, ),  # 0
     )
 
     def __init__(self, success=None,):
@@ -1355,8 +1355,9 @@ class FI_find_group_users_result(object):
             if ftype == TType.STOP:
                 break
             if fid == 0:
-                if ftype == TType.STRING:
-                    self.success = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                if ftype == TType.STRUCT:
+                    self.success = db_users()
+                    self.success.read(iprot)
                 else:
                     iprot.skip(ftype)
             else:
@@ -1370,8 +1371,8 @@ class FI_find_group_users_result(object):
             return
         oprot.writeStructBegin('FI_find_group_users_result')
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRING, 0)
-            oprot.writeString(self.success.encode('utf-8') if sys.version_info[0] == 2 else self.success)
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()

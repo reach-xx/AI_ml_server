@@ -28,7 +28,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  i32 FI_del_face_database(string uid, string group_id)')
     print('  i32 FI_update_face_database(string uid, string user_info, string group_id, string imagename)')
     print('  i32 FI_find_user_info(string uid)')
-    print('  string FI_find_group_users(string group_id)')
+    print('  db_users FI_find_group_users(string group_id)')
     print('  face_id_st FI_face_database_identify(string group_id, string imagename)')
     print('  string FI_face_database_verify(string uid, string user_info, string group_id, string imagename)')
     print('  i32 FI_group_deleteuser(string uid, string group_id)')
