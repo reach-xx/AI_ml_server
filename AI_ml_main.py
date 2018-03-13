@@ -1,7 +1,8 @@
 import sys
 import os
-import face_identify
 from AI_ml_interface import FaceServiceAPI
+from AI_ml_interface import ObjectServiceAPI
+
 import uuid
 import base64
 
@@ -15,8 +16,6 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-face_recognition = face_identify
-
 class FaceServiceHandler:
     def __init__(self):
         self.log = {}
@@ -29,7 +28,7 @@ class FaceServiceHandler:
             w.write(base64.b64decode(str.encode(b64code)))
         FaceAPI = FaceServiceAPI()
         ret = FaceAPI.add_face(uid, user_info, group_id, name)
-        os.remove(name)
+        #os.remove(name)
         return ret
 
     def FI_del_face_database(self, uid, group_id):
@@ -84,6 +83,15 @@ class FaceServiceHandler:
     def FI_face_match(self, image1, image2):
         pass
 
+    def FI_object_tracking(self, b64code, rect, start):
+        rand = uuid.uuid4()
+        name = "faces_img/track"+str(rand)+".jpg"
+        with open(name, "wb") as w:
+            w.write(base64.b64decode(str.encode(b64code)))
+        objAPI = ObjectServiceAPI()
+        pos = objAPI.object_tracking(name, rect, start)
+        os.remove(name)
+        return pos
 
 """thrift program start server"""
 if __name__ == "__main__":

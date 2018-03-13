@@ -108,6 +108,15 @@ class Iface(object):
         """
         pass
 
+    def FI_object_tracking(self, image, rect, start):
+        """
+        Parameters:
+         - image
+         - rect
+         - start
+        """
+        pass
+
 
 class Client(Iface):
     def __init__(self, iprot, oprot=None):
@@ -485,6 +494,41 @@ class Client(Iface):
             return result.success
         raise TApplicationException(TApplicationException.MISSING_RESULT, "FI_face_match failed: unknown result")
 
+    def FI_object_tracking(self, image, rect, start):
+        """
+        Parameters:
+         - image
+         - rect
+         - start
+        """
+        self.send_FI_object_tracking(image, rect, start)
+        return self.recv_FI_object_tracking()
+
+    def send_FI_object_tracking(self, image, rect, start):
+        self._oprot.writeMessageBegin('FI_object_tracking', TMessageType.CALL, self._seqid)
+        args = FI_object_tracking_args()
+        args.image = image
+        args.rect = rect
+        args.start = start
+        args.write(self._oprot)
+        self._oprot.writeMessageEnd()
+        self._oprot.trans.flush()
+
+    def recv_FI_object_tracking(self):
+        iprot = self._iprot
+        (fname, mtype, rseqid) = iprot.readMessageBegin()
+        if mtype == TMessageType.EXCEPTION:
+            x = TApplicationException()
+            x.read(iprot)
+            iprot.readMessageEnd()
+            raise x
+        result = FI_object_tracking_result()
+        result.read(iprot)
+        iprot.readMessageEnd()
+        if result.success is not None:
+            return result.success
+        raise TApplicationException(TApplicationException.MISSING_RESULT, "FI_object_tracking failed: unknown result")
+
 
 class Processor(Iface, TProcessor):
     def __init__(self, handler):
@@ -501,6 +545,7 @@ class Processor(Iface, TProcessor):
         self._processMap["FI_group_adduser"] = Processor.process_FI_group_adduser
         self._processMap["FI_face_detect"] = Processor.process_FI_face_detect
         self._processMap["FI_face_match"] = Processor.process_FI_face_match
+        self._processMap["FI_object_tracking"] = Processor.process_FI_object_tracking
 
     def process(self, iprot, oprot):
         (name, type, seqid) = iprot.readMessageBegin()
@@ -722,6 +767,25 @@ class Processor(Iface, TProcessor):
             logging.exception(ex)
             result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
         oprot.writeMessageBegin("FI_face_match", msg_type, seqid)
+        result.write(oprot)
+        oprot.writeMessageEnd()
+        oprot.trans.flush()
+
+    def process_FI_object_tracking(self, seqid, iprot, oprot):
+        args = FI_object_tracking_args()
+        args.read(iprot)
+        iprot.readMessageEnd()
+        result = FI_object_tracking_result()
+        try:
+            result.success = self._handler.FI_object_tracking(args.image, args.rect, args.start)
+            msg_type = TMessageType.REPLY
+        except (TTransport.TTransportException, KeyboardInterrupt, SystemExit):
+            raise
+        except Exception as ex:
+            msg_type = TMessageType.EXCEPTION
+            logging.exception(ex)
+            result = TApplicationException(TApplicationException.INTERNAL_ERROR, 'Internal error')
+        oprot.writeMessageBegin("FI_object_tracking", msg_type, seqid)
         result.write(oprot)
         oprot.writeMessageEnd()
         oprot.trans.flush()
@@ -2185,6 +2249,151 @@ class FI_face_match_result(object):
         if self.success is not None:
             oprot.writeFieldBegin('success', TType.STRING, 0)
             oprot.writeString(self.success.encode('utf-8') if sys.version_info[0] == 2 else self.success)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class FI_object_tracking_args(object):
+    """
+    Attributes:
+     - image
+     - rect
+     - start
+    """
+
+    thrift_spec = (
+        None,  # 0
+        (1, TType.STRING, 'image', 'UTF8', None, ),  # 1
+        (2, TType.STRUCT, 'rect', (rectangle, rectangle.thrift_spec), None, ),  # 2
+        (3, TType.I32, 'start', None, None, ),  # 3
+    )
+
+    def __init__(self, image=None, rect=None, start=None,):
+        self.image = image
+        self.rect = rect
+        self.start = start
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 1:
+                if ftype == TType.STRING:
+                    self.image = iprot.readString().decode('utf-8') if sys.version_info[0] == 2 else iprot.readString()
+                else:
+                    iprot.skip(ftype)
+            elif fid == 2:
+                if ftype == TType.STRUCT:
+                    self.rect = rectangle()
+                    self.rect.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            elif fid == 3:
+                if ftype == TType.I32:
+                    self.start = iprot.readI32()
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('FI_object_tracking_args')
+        if self.image is not None:
+            oprot.writeFieldBegin('image', TType.STRING, 1)
+            oprot.writeString(self.image.encode('utf-8') if sys.version_info[0] == 2 else self.image)
+            oprot.writeFieldEnd()
+        if self.rect is not None:
+            oprot.writeFieldBegin('rect', TType.STRUCT, 2)
+            self.rect.write(oprot)
+            oprot.writeFieldEnd()
+        if self.start is not None:
+            oprot.writeFieldBegin('start', TType.I32, 3)
+            oprot.writeI32(self.start)
+            oprot.writeFieldEnd()
+        oprot.writeFieldStop()
+        oprot.writeStructEnd()
+
+    def validate(self):
+        return
+
+    def __repr__(self):
+        L = ['%s=%r' % (key, value)
+             for key, value in self.__dict__.items()]
+        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
+class FI_object_tracking_result(object):
+    """
+    Attributes:
+     - success
+    """
+
+    thrift_spec = (
+        (0, TType.STRUCT, 'success', (rectangle, rectangle.thrift_spec), None, ),  # 0
+    )
+
+    def __init__(self, success=None,):
+        self.success = success
+
+    def read(self, iprot):
+        if iprot._fast_decode is not None and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None:
+            iprot._fast_decode(self, iprot, (self.__class__, self.thrift_spec))
+            return
+        iprot.readStructBegin()
+        while True:
+            (fname, ftype, fid) = iprot.readFieldBegin()
+            if ftype == TType.STOP:
+                break
+            if fid == 0:
+                if ftype == TType.STRUCT:
+                    self.success = rectangle()
+                    self.success.read(iprot)
+                else:
+                    iprot.skip(ftype)
+            else:
+                iprot.skip(ftype)
+            iprot.readFieldEnd()
+        iprot.readStructEnd()
+
+    def write(self, oprot):
+        if oprot._fast_encode is not None and self.thrift_spec is not None:
+            oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
+            return
+        oprot.writeStructBegin('FI_object_tracking_result')
+        if self.success is not None:
+            oprot.writeFieldBegin('success', TType.STRUCT, 0)
+            self.success.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
         oprot.writeStructEnd()

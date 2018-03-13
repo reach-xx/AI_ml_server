@@ -35,6 +35,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
     print('  i32 FI_group_adduser(string src_group_id, string group_id, string uid)')
     print('  face_detect_st FI_face_detect(string imagename)')
     print('  string FI_face_match(string image1, string image2)')
+    print('  rectangle FI_object_tracking(string image, rectangle rect, i32 start)')
     print('')
     sys.exit(0)
 
@@ -179,6 +180,12 @@ elif cmd == 'FI_face_match':
         print('FI_face_match requires 2 args')
         sys.exit(1)
     pp.pprint(client.FI_face_match(args[0], args[1],))
+
+elif cmd == 'FI_object_tracking':
+    if len(args) != 3:
+        print('FI_object_tracking requires 3 args')
+        sys.exit(1)
+    pp.pprint(client.FI_object_tracking(args[0], eval(args[1]), eval(args[2]),))
 
 else:
     print('Unrecognized method %s' % cmd)

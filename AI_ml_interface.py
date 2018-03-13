@@ -14,6 +14,7 @@ import os
 import sys
 
 import face_identify
+import object_detect
 sys.path.append('gen-py')
 from identify.ttypes import *
 
@@ -171,3 +172,26 @@ class FaceServiceAPI:
             cnt += 1
         d_info.result = m_faces
         return d_info
+
+
+#objects detectors API
+#objects tracking API
+#object identify API
+class ObjectServiceAPI:
+
+    def object_tracking(self, image, rect, start):
+        update_pos = rectangle()
+        if start == 1:
+            object_detect.start_object_track(image, rect)
+            return rect
+        else:
+            pos = object_detect.update_object_track(image)
+            print(pos)
+        update_pos.left, update_pos.top, \
+                        update_pos.right, update_pos.bottom = \
+                                round(pos.left()), round(pos.top()), \
+                                        round(pos.right()), round(pos.bottom())
+        return update_pos
+
+
+

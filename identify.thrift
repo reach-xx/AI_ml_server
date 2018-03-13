@@ -9,7 +9,9 @@ service  FaceIdentify {
  i32 FI_group_deleteuser(1: string uid, 2: string group_id),
  i32 FI_group_adduser(1:string src_group_id, 2: string group_id, 3: string uid)
  face_detect_st FI_face_detect(1:string imagename)
- string FI_face_match(1:string image1, 2:string image2)  
+ string FI_face_match(1:string image1, 2:string image2)
+ /*object tracker start = 1 for set track object, rect for */
+ rectangle FI_object_tracking(1: string image, 2: rectangle rect, 3: i32 start)
 }
 
 struct rectangle {

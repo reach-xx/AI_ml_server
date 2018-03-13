@@ -84,8 +84,8 @@ try:
     #result = client.FI_face_database_identify("group02", b64str)
     #print(result)
 
-    result = client.FI_find_group_users("group02")
-    print(result)
+    # result = client.FI_find_group_users("group02")
+    # print(result)
     #with open("111.JPG", "rb") as f:
     #     b64code = base64.b64encode(f.read())
     # b64str = bytes.decode(b64code)
@@ -95,6 +95,24 @@ try:
     # result = client.FI_del_face_database("099", "group02")
     # result = client.FI_del_face_database("003", "group02")
     # result = client.FI_del_face_database("006", "group02")
+    #####object tracking test######################
+    import os
+
+    start = 1
+    video_folder = os.path.join("video_frames")
+    for k, name in enumerate(sorted(glob.glob(os.path.join(video_folder, "*.jpg")))):
+        print("filename:", name)
+        with open(name, "rb") as f:
+            b64code = base64.b64encode(f.read())
+        b64str = bytes.decode(b64code)
+        rect = rectangle()
+        rect.left, rect.top, rect.right, rect.bottom = 74, 67, 112, 153
+        if start == 1:
+            client.FI_object_tracking(b64str, rect, start)
+            start = 0
+        else:
+            pos = client.FI_object_tracking(b64str, rect, start)
+            print(pos)
 
     # Close!
     transport.close()
