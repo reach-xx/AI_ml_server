@@ -41,7 +41,7 @@ struct face_detect_st {
  2: map<i32,rectangle> result;
 }
 
-struct user_info {
+struct user_info_st {
    1: string uid;
    2: string groud_id;
    3: string user_info;
@@ -50,5 +50,5 @@ struct user_info {
 /*users in database */
 struct db_users {
     1: i32 users_num;
-    2: map<i32,user_info> user;
+    2: map<i32,user_info_st> user;
 }

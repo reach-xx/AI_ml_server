@@ -19,6 +19,7 @@ from thrift.server import TServer
 class FaceServiceHandler:
     def __init__(self):
         self.log = {}
+        self.times = 0
 
     def FI_add_face_database(self, uid, user_info, group_id, b64code):
         """将人脸加入数据库中"""
@@ -85,12 +86,14 @@ class FaceServiceHandler:
 
     def FI_object_tracking(self, b64code, rect, start):
         rand = uuid.uuid4()
-        name = "faces_img/track"+str(rand)+".jpg"
+        name = "faces_img/track" + str(self.times) + ".jpg"
+        self.times += 1
+        #name = "faces_img/track"+str(rand)+".jpg"
         with open(name, "wb") as w:
             w.write(base64.b64decode(str.encode(b64code)))
         objAPI = ObjectServiceAPI()
         pos = objAPI.object_tracking(name, rect, start)
-        os.remove(name)
+        #os.remove(name)
         return pos
 
 """thrift program start server"""

@@ -372,7 +372,7 @@ class face_detect_st(object):
         return not (self == other)
 
 
-class user_info(object):
+class user_info_st(object):
     """
     Attributes:
      - uid
@@ -425,7 +425,7 @@ class user_info(object):
         if oprot._fast_encode is not None and self.thrift_spec is not None:
             oprot.trans.write(oprot._fast_encode(self, (self.__class__, self.thrift_spec)))
             return
-        oprot.writeStructBegin('user_info')
+        oprot.writeStructBegin('user_info_st')
         if self.uid is not None:
             oprot.writeFieldBegin('uid', TType.STRING, 1)
             oprot.writeString(self.uid.encode('utf-8') if sys.version_info[0] == 2 else self.uid)
@@ -466,7 +466,7 @@ class db_users(object):
     thrift_spec = (
         None,  # 0
         (1, TType.I32, 'users_num', None, None, ),  # 1
-        (2, TType.MAP, 'user', (TType.I32, None, TType.STRUCT, (user_info, user_info.thrift_spec), False), None, ),  # 2
+        (2, TType.MAP, 'user', (TType.I32, None, TType.STRUCT, (user_info_st, user_info_st.thrift_spec), False), None, ),  # 2
     )
 
     def __init__(self, users_num=None, user=None,):
@@ -493,7 +493,7 @@ class db_users(object):
                     (_ktype19, _vtype20, _size18) = iprot.readMapBegin()
                     for _i22 in range(_size18):
                         _key23 = iprot.readI32()
-                        _val24 = user_info()
+                        _val24 = user_info_st()
                         _val24.read(iprot)
                         self.user[_key23] = _val24
                     iprot.readMapEnd()

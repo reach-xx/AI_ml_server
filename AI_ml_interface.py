@@ -83,7 +83,7 @@ class FaceServiceAPI:
         users_dict = {}
         cnt = 0
         for face in cursors:
-            u_info = user_info()
+            u_info = user_info_st()
             u_info.uid, u_info.group, u_info.user_info = face[0], face[1], face[2]
             print("+++++++++++++++++++++++++++++++++++++++++")
             print("*******----------{0}------{1}------".format(u_info.uid, u_info.user_info))
@@ -114,14 +114,12 @@ class FaceServiceAPI:
             faces_group.append(face[1])
             faces_info.append(face[2])
             faces_encode.append(json.loads(face[4]))
-        print("-----------------------------identify!!!!\n")
         params = face_id_st()
         params.result_num = len(face_encodings)
         face_dict = {}
         cnt = 0
         if params.result_num == 0:
             print("detect no face!!!!\n")
-            os.remove(name)
             return params
         for face_enc, location in zip(face_encodings,face_loc):
             results = face_recognition.compare_faces(faces_encode, face_enc)
@@ -183,6 +181,7 @@ class ObjectServiceAPI:
         update_pos = rectangle()
         if start == 1:
             object_detect.start_object_track(image, rect)
+            print('start object tracking !!!!!! = \n', rect)
             return rect
         else:
             pos = object_detect.update_object_track(image)

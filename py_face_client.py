@@ -97,6 +97,7 @@ try:
     # result = client.FI_del_face_database("006", "group02")
     #####object tracking test######################
     import os
+    import time
 
     start = 1
     video_folder = os.path.join("video_frames")
@@ -111,8 +112,10 @@ try:
             client.FI_object_tracking(b64str, rect, start)
             start = 0
         else:
-            pos = client.FI_object_tracking(b64str, rect, start)
-            print(pos)
+            s_time = time.time()
+            pos=client.FI_object_tracking(b64str, rect, start)
+            e_time = time.time()
+            print("The function run time is : %.03f seconds" %(e_time - s_time))
 
     # Close!
     transport.close()
